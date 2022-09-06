@@ -23,7 +23,6 @@ class DrumNote:
 
         # midi
         self.note = note
-        self.velocity = 0
 
         # display
         self.color = color
@@ -41,8 +40,6 @@ class DrumNote:
         return self.note == note
 
     def activate_note(self, velocity: int):
-        self.velocity = velocity
-
         self.is_animation_active = True
         self.last_ts_note_on_event = current_milli_time()
         self.max_row = calculate_max_row(velocity)
@@ -72,7 +69,8 @@ class DrumNote:
         if self.is_animation_active:
             curr_diff = current_milli_time() - self.last_ts_note_on_event  # animation diff <0, 400>
             hide_rows = round(curr_diff / self.one_led_ms)
-            #print("curr_diff:", curr_diff, "hide_rows:", hide_rows, "max_row:", self.max_row)
+            # print("curr_diff:", curr_diff, "hide_rows:", hide_rows, "max_row:", self.max_row)
+            # print(' ')
 
             # case: nothing was hide yet
             # case: hide nex row
@@ -80,22 +78,30 @@ class DrumNote:
                 hide_row = self.max_row - hide_rows
                 for col in range(DISPLAY_IDX_SIZE):
 
-                    #print("hide_row", hide_row, " col ", col)
+                    # print("last_hidden:", self.last_hidden, "hide_row", hide_row, " col ", col)
 
                     if hide_row <= 0:
                         # clean columns
                         for col_off in range(DISPLAY_IDX_SIZE):
                             self.toilet_wall.turn_off_column(self.display_idxs[col_off])
                     else:
-                        # turn off leds
-                        #print("last_hidden:", self.last_hidden, " round(hide_row):", round(hide_row))
-                        #for row in range(self.last_hidden, round(hide_row), -1):
-                        #    print("hiding row -- ", row)
-                        # TODO some rows are skipped
-                        self.toilet_wall.change_led(
-                            round(hide_row),
-                            self.display_idxs[col],
-                            COLOR_BLACK)
+                        # turn off first time
+                        if self.last_hidden == -1:
+                            self.toilet_wall.change_led(
+                                round(self.max_row),
+                                self.display_idxs[col],
+                                COLOR_BLACK)
+                            # print("hiding row (-1) -- ", round(hide_row))
+
+                        # turn off other time
+                        else:
+                            for row in range(self.last_hidden, round(hide_row), -1):
+                                self.toilet_wall.change_led(
+                                    row,
+                                    self.display_idxs[col],
+                                    COLOR_BLACK)
+                                # print("hiding row (foreach) -- ", row)
+
                 self.last_hidden = self.max_row - hide_rows
                 self.toilet_wall.show()
 

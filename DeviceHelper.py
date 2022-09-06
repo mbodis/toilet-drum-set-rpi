@@ -26,7 +26,7 @@ def get_device_id():
     print_device_info()
     device_name = "Alesis Nitro MIDI 1"
     for idx in range(pygame.midi.get_count()):
-        (interf, name, input, output, opened) = pygame.midi.get_device_info(i)
+        (interf, name, input, output, opened) = pygame.midi.get_device_info(idx)
         if str(name).find(device_name) != -1 and input:
             return idx
     print("Device not found: ", device_name, " make sure device is ON and plugged !")

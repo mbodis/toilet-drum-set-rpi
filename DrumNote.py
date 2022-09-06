@@ -4,7 +4,7 @@ from constants import COLOR_BLACK
 
 DISPLAY_IDX_SIZE = 2
 MAX_VELOCITY = 127
-SHOW_LED_ADDITIONAL_ANIMATION_MS = 600
+SHOW_LED_ADDITIONAL_ANIMATION_MS = 400
 
 
 def calculate_max_row(velocity: int):

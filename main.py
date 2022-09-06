@@ -1,5 +1,5 @@
 import pygame.midi
-import threading
+import threading, queue
 import time
 
 from DeviceHelper import get_device_id
@@ -7,10 +7,8 @@ from DrumSet import DrumSet
 
 
 class ThreadReadingMidi(threading.Thread):
-    def __init__(self, thread_id, name):
+    def __init__(self):
         threading.Thread.__init__(self)
-        self.threadID = thread_id
-        self.name = name
 
         # wait until drums are connected and enabled
         while True:
@@ -39,28 +37,32 @@ class ThreadReadingMidi(threading.Thread):
                 note_number = data[1]  # 49
                 velocity = data[2]  # 50
                 if note_number != 0 and velocity != 0:
-                    drum_set.new_action_note_on(9, note_number, velocity)
+                    queue.put([9, note_number, velocity])
 
 
 class ThreadLedDisplay(threading.Thread):
-    def __init__(self, thread_id, name):
+    def __init__(self):
         threading.Thread.__init__(self)
-        self.threadID = thread_id
-        self.name = name
 
     def run(self):
         while True:
-            # TODO implement QUEUE both threads can access ??
+            if not queue.empty():
+                new_note = queue.get()
+                drum_set.new_action_note_on(new_note[0], new_note[1], new_note[2])
             drum_set.update_note_status()
 
+
+queue = queue.Queue()
 
 # init drums
 drum_set = DrumSet()
 
 # init and run threads
-threadReadingMidi = ThreadReadingMidi(1, "Thread-midi")
-threadLedDisplay = ThreadLedDisplay(2, "Thread-led")
+threadReadingMidi = ThreadReadingMidi()
+threadLedDisplay = ThreadLedDisplay()
 threadReadingMidi.start()
 threadLedDisplay.start()
 
-# TODO cover case when device was unplugged after some time and then plugged back
+# TODO unimplemented case:
+#  when device was unplugged after some time and then plugged back
+#  introduce new thread that will be checking presence of usb device then re-init connection

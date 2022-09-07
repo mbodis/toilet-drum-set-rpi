@@ -69,7 +69,7 @@ class DrumNote:
         if self.is_animation_active:
             curr_diff = current_milli_time() - self.last_ts_note_on_event  # animation diff <0, 400>
             hide_rows = round(curr_diff / self.one_led_ms)
-            # print("curr_diff:", curr_diff, "hide_rows:", hide_rows, "max_row:", self.max_row)
+            # print("curr_diff:", curr_diff, "hide_rows:", hide_rows, "max_row:", self.max_row, "last_hidden:", self.last_hidden)
             # print(' ')
 
             # case: nothing was hide yet
@@ -106,7 +106,9 @@ class DrumNote:
                 self.toilet_wall.show()
 
             if self.last_hidden <= 0:
+                self.last_hidden = -1
                 self.is_animation_active = False
 
             if curr_diff > SHOW_LED_ADDITIONAL_ANIMATION_MS:
+                self.last_hidden = -1
                 self.is_animation_active = False

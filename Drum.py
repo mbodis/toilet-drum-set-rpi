@@ -20,5 +20,10 @@ class Drum:
         return False
 
     def draw_drum_effect(self):
+        # optimisation: redraw only once for all drums
+        should_redraw = False
         for noteIdx in range(self.note_count):
-            self.drum_notes[noteIdx].draw_effect()
+            if self.drum_notes[noteIdx].draw_effect():
+                should_redraw = True
+        if should_redraw:
+            self.toilet_wall.show()

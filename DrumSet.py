@@ -75,7 +75,7 @@ class DrumSet:
         print("channel: ", channel)
         print("note: ", note)
         print("velocity: ", velocity)
-        print("")
+        print("----- ", msg, " -----")
 
     def update_note_status(self):
         for drumIdx in range(self.drumsCount):

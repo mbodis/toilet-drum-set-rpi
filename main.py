@@ -36,7 +36,8 @@ class ThreadReadingMidi(threading.Thread):
                 timestamp = event[1]  # 125
                 note_number = data[1]  # 49
                 velocity = data[2]  # 50
-                if note_number != 0 and velocity != 0:
+                if note_number != 0 and velocity != 0 and data[0] == 153:
+                    # print("raw event:", event)
                     queue.put([9, note_number, velocity])
 
 

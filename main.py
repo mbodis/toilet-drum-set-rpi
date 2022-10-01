@@ -38,7 +38,7 @@ class ThreadReadingMidi(threading.Thread):
                 velocity = data[2]  # 50
                 if note_number != 0 and velocity != 0 and data[0] == 153:
                     # print("raw event:", event)
-                    queue.put([9, note_number, velocity])
+                    newPlayedNotesQueue.put([9, note_number, velocity])
 
 
 class ThreadLedDisplay(threading.Thread):
@@ -47,13 +47,13 @@ class ThreadLedDisplay(threading.Thread):
 
     def run(self):
         while True:
-            if not queue.empty():
-                new_note = queue.get()
+            while not newPlayedNotesQueue.empty():
+                new_note = newPlayedNotesQueue.get()
                 drum_set.new_action_note_on(new_note[0], new_note[1], new_note[2])
             drum_set.update_note_status()
 
 
-queue = queue.Queue()
+newPlayedNotesQueue = queue.Queue()
 
 # init drums
 drum_set = DrumSet()
@@ -67,3 +67,4 @@ threadLedDisplay.start()
 # TODO unimplemented case:
 #  when device was unplugged after some time and then plugged back
 #  introduce new thread that will be checking presence of usb device then re-init connection
+#  reason why it's not implemented: too lazy, just for home use

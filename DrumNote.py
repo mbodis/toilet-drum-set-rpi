@@ -76,12 +76,17 @@ class DrumNote:
             # print(' ')
 
             # case: nothing was hide yet
-            # case: hide nex row
+            # case: hide next row
             if self.last_hidden == -1 or ((self.max_row - hide_rows) != self.last_hidden):
                 hide_row = self.max_row - hide_rows
                 for col in range(DISPLAY_IDX_SIZE):
 
                     # print("last_hidden:", self.last_hidden, "hide_row", hide_row, " col ", col)
+
+                    # if time is up clear all rows
+                    if curr_diff > SHOW_LED_ADDITIONAL_ANIMATION_MS:
+                        # print("time is up hide_row:", hide_row)
+                        hide_row = -1
 
                     if self.last_hidden == -1:
                         self.last_hidden = self.max_row

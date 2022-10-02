@@ -84,7 +84,8 @@ class DrumNote:
                     # print("last_hidden:", self.last_hidden, "hide_row", hide_row, " col ", col)
 
                     # if time is up clear all rows
-                    if curr_diff > SHOW_LED_ADDITIONAL_ANIMATION_MS:
+                    if curr_diff > SHOW_LED_ADDITIONAL_ANIMATION_MS\
+                            or ((self.max_row - hide_rows) <= 0):
                         # print("time is up hide_row:", hide_row)
                         hide_row = -1
 
